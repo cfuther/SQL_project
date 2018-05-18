@@ -1,0 +1,18 @@
+json_df = pd.read_json('C:/Xiao/data_wrangling_json/data_wrangling_json/data/world_bank_projects.json')
+
+#countries with most projects
+json_ct = json_df['countryname'].value_counts()
+ct_10 = json_ct[:10]
+
+#top 10 major projects
+full_data = json.load((open('C:/Xiao/data_wrangling_json/data_wrangling_json/data/world_bank_projects.json')))
+json_major = json_normalize(full_data,'mjtheme_namecode')
+major_project = json_major['name'].value_counts()
+pj_10 = major_project[:10]
+
+#fill missing names
+new_json = json_major[json_major.name != ''].drop_duplicates()
+fill_json = pd.merge(json_major,new_json,on='code',how='left',suffixes=('_old','_new'))
+final_json = fill_json.loc[:,['code','name_new']]
+final_json.columns=['code','name']
+final_json
